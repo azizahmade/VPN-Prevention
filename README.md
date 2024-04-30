@@ -1,2 +1,2 @@
-# VPN-Prevention-Project
+# VPN-Prevention
 Final project 
