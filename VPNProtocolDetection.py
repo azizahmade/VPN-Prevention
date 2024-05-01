@@ -55,6 +55,8 @@ class VPNProtocolDetector:
                 self.analyze_tcp(ip_packet[TCP])
             elif UDP in ip_packet:
                 self.analyze_udp(ip_packet[UDP])
+        else:
+            print("NO VPN !")
 
     def analyze_tcp(self, tcp_packet):
         source_port = tcp_packet.sport
@@ -93,9 +95,3 @@ class VPNProtocolDetector:
 
         return False
 
-    def start_sniffing(self, interface):
-        sniff(iface=interface, prn=self.packet_callback, filter="ip")
-
-# Usage
-detector = VPNProtocolDetector()
-detector.start_sniffing("eth0")
