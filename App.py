@@ -1,4 +1,4 @@
-from scapy.all import  UDP , TCP , IP , sniff ,Ether
+from scapy.all import *
 from VPNProtocolDetection import VPNProtocolDetector
 from VPNServerIP import VPNServerIpDetector
 
