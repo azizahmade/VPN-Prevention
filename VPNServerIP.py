@@ -1,27 +1,44 @@
-from scapy.all import sniff, IP, TCP, UDP , DNS
-from telnetlib import IP
+import pyshark
+
 
 class VPNServerIpDetector:
 
-    vpn_server_ips = []
-    with open('ip.txt', 'r') as ip:
-        for line in ip:
-            vpn_server_ips.append(line.strip())
+    def __init__(self):
+        self.vpn_server_ips = []
+        self.vpn_server_domains = []
 
-    def analyze_packet(packet):
-        if IP in packet:
-            source_ip = packet[IP].src
-            if source_ip in vpn_server_ips:
-                print("VPN Traffic Detected from:", source_ip)
+        # Read VPN server IPs from file
+        with open('ip.txt', 'r') as ip_file:
+            for line in ip_file:
+                self.vpn_server_ips.append(line.strip())
 
-    vpn_server_domin = []
-    with open ('domin.txt' , 'r') as domin:
-        for line in domin:
-            vpn_server_domin.append(line.strip())
+        # Read VPN server domains from file
+        with open('domin.txt', 'r') as domain_file:
+            for line in domain_file:
+                self.vpn_server_domains.append(line.strip())
 
-    def analyze_dns(packet):
+    def analyze_packet(self, packet):
+        try:
+            if 'IP' in packet:
+                source_ip = packet.ip.src
+                if source_ip in self.vpn_server_ips:
+                    print("VPN Traffic Detected from:", source_ip)
+            if 'DNS' in packet:
+                dns_query = packet.dns.qry_name
+                if dns_query in self.vpn_server_domains:
+                    print("VPN DNS Query Detected:", dns_query)
+        except AttributeError:
+            # Ignore packets that do not have the required attributes
+            pass
 
-         if DNS in packet:
-            if packet[DNS].qd.qname.decode() in vpn_server_domin:
-                print("VPN DNS Query Detected:", packet[DNS].qd.qname.decode())
+    def capture_vpn_traffic(self, interface):
+        capture = pyshark.LiveCapture(interface=interface)
+        print(f"Listening on {interface}...")
 
+        for packet in capture.sniff_continuously():
+            self.analyze_packet(packet)
+
+
+if __name__ == "__main__":
+    detector = VPNServerIpDetector()
+    detector.capture_vpn_traffic('wlp2s0')
