@@ -2,7 +2,9 @@ import pyshark
 
 class VPNProtocolDetector:
     # Define the ports to monitor for VPN traffic
-    VPN_PORTS = {1194, 500, 4500, 1701, 1723, 443, 51820}
+    VPN_PORTS = {1194, 500, 4500, 1701, 1723, 51820,    6881, 6882, 6883, 6884, 6885,
+                 6886, 6887, 6888, 6889, 6969, 17000, 18000, 4662, 4665, 4672, 6346, 6347, 411, 412, 1214,
+                 2234, 6257, 6699, 8888, 9001, 9030, 53, 22}
 
     def __init__(self, interface, tshark_path=None):
         self.interface = interface
@@ -35,10 +37,21 @@ class VPNProtocolDetector:
 
 
 if __name__ == "__main__":
-    # Adjust the path to 'tshark' if necessary
+
     tshark_path = '/usr/bin/tshark'
-    detector = VPNProtocolDetector('wlp2s0', tshark_path=tshark_path)
+    detector = VPNProtocolDetector('wlp2s0')
     detector.capture_vpn_traffic()
+
+
+
+
+
+
+
+
+
+
+
 
 
 # from scapy.all import sniff, IP, TCP, UDP
